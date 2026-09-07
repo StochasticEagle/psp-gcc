@@ -21,3 +21,12 @@
 MULTILIB_OPTIONS = msoft-float EL/EB
 MULTILIB_DIRNAMES = soft-float el eb
 MULTILIB_MATCHES = EL=mel EB=meb msingle-float=m4650
+
+# The PSP uses newlib for its C library.  GCC's internal include directory is
+# searched before the target libc include directory, so install GCC's stdint.h
+# wrapper for PSP builds.  The wrapper uses #include_next to reach newlib's
+# stdint.h, ensuring newlib's internal __int*_t_defined markers are established
+# before inttypes.h decides which PRI*/SCN* format macros to expose.
+ifneq (,$(findstring -psp-elf,$(target)))
+USE_GCC_STDINT = wrap
+endif
