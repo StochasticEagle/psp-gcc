@@ -4265,7 +4265,7 @@ if test x$with_arch = x ; then
     x86_64-*-*)
       with_arch=$arch
       ;;
-    mips64r5900-*-* | mips64r5900el-*-* | mipsr5900-*-* | mipsr5900el-*-* | \
+    mips64r5900-*-* | mips64r5900el-*-* | mipsr5900-*-* | mipsr5900el-*-*)
       with_arch=r5900
       ;;
     mipsallegrex-*-* | mipsallegrexel-*-*)
