@@ -23,7 +23,7 @@
 (define_insn "allegrex_bitrevsi2"
   [(set (match_operand:SI 0 "register_operand" "=d")
    (unspec:SI [(match_operand:SI 1 "register_operand" "d")]
-          UNSPEC_BITREV))]
+          UNSPEC_ALLEGREX_BITREV))]
   "TARGET_ALLEGREX"
   "bitrev\t%0,%1"
   [(set_attr "type"    "arith")
@@ -36,7 +36,7 @@
 (define_insn "allegrex_closi2"
   [(set (match_operand:SI 0 "register_operand" "=d")
        (unspec:SI [(match_operand:SI 1 "register_operand" "d")]
-          UNSPEC_CLO))]
+          UNSPEC_ALLEGREX_CLO))]
   "TARGET_ALLEGREX"
   "clo\t%0,%1"
   [(set_attr "type"    "clz")
@@ -56,7 +56,7 @@
 (define_expand "allegrex_ctosi2"
   [(set (match_operand:SI 0 "register_operand")
        (unspec:SI [(match_operand:SI 1 "register_operand")]
-          UNSPEC_CTO))]
+          UNSPEC_ALLEGREX_CTO))]
   "TARGET_ALLEGREX"
 {
   emit_insn (gen_allegrex_bitrevsi2 (operands[0], operands[1]));
@@ -70,7 +70,7 @@
 (define_insn "allegrex_cache"
   [(unspec_volatile [(match_operand:SI 0 "const_int_operand" "")
             (match_operand:SI 1 "register_operand" "d")]
-           UNSPEC_CACHE)]
+           UNSPEC_ALLEGREX_CACHE)]
   "TARGET_ALLEGREX"
   "cache\t%0,0(%1)"
   [(set_attr "type"    "unknown")
@@ -82,7 +82,7 @@
 (define_insn "allegrex_ceilsfsi2"
   [(set (match_operand:SI 0 "register_operand" "=f")
        (unspec:SI [(match_operand:SF 1 "register_operand" "f")]
-          UNSPEC_CEIL_W_S))]
+          UNSPEC_ALLEGREX_CEIL_W_S))]
   "TARGET_ALLEGREX"
   "ceil.w.s\t%0,%1"
   [(set_attr "type"    "fcvt")
@@ -91,7 +91,7 @@
 (define_insn "allegrex_floorsfsi2"
   [(set (match_operand:SI 0 "register_operand" "=f")
        (unspec:SI [(match_operand:SF 1 "register_operand" "f")]
-          UNSPEC_FLOOR_W_S))]
+          UNSPEC_ALLEGREX_FLOOR_W_S))]
   "TARGET_ALLEGREX"
   "floor.w.s\t%0,%1"
   [(set_attr "type"    "fcvt")
@@ -100,7 +100,7 @@
 (define_insn "allegrex_roundsfsi2"
   [(set (match_operand:SI 0 "register_operand" "=f")
        (unspec:SI [(match_operand:SF 1 "register_operand" "f")]
-          UNSPEC_ROUND_W_S))]
+          UNSPEC_ALLEGREX_ROUND_W_S))]
   "TARGET_ALLEGREX"
   "round.w.s\t%0,%1"
   [(set_attr "type"    "fcvt")
