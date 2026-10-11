@@ -265,7 +265,9 @@ enum mips_builtin_type {
   MIPS_BUILTIN_MSA_TEST_BRANCH,
 
   /* For generating bposge32 branch instructions in MIPS32 DSP ASE.  */
-  MIPS_BUILTIN_BPOSGE32
+  MIPS_BUILTIN_BPOSGE32,
+
+  MIPS_BUILTIN_ALLEGREX_CACHE
 };
 
 /* Invoke MACRO (COND) for each C.cond.fmt condition.  */
@@ -15795,6 +15797,7 @@ AVAIL_NON_MIPS16 (dsp_32, !TARGET_64BIT && TARGET_DSP)
 AVAIL_NON_MIPS16 (dsp_64, TARGET_64BIT && TARGET_DSP)
 AVAIL_NON_MIPS16 (dspr2_32, !TARGET_64BIT && TARGET_DSPR2)
 AVAIL_NON_MIPS16 (loongson, TARGET_LOONGSON_MMI)
+AVAIL_NON_MIPS16 (allegrex, TARGET_ALLEGREX)
 AVAIL_MIPS16E2_OR_NON_MIPS16 (cache, TARGET_CACHE_BUILTIN)
 AVAIL_NON_MIPS16 (msa, TARGET_MSA)
 AVAIL_NON_MIPS16 (r6, mips_isa_rev >= 6)
@@ -15902,6 +15905,11 @@ AVAIL_NON_MIPS16 (r6, mips_isa_rev >= 6)
 #define BPOSGE_BUILTIN(VALUE, AVAIL)					\
   MIPS_BUILTIN (bposge, f, "bposge" #VALUE,				\
 		MIPS_BUILTIN_BPOSGE ## VALUE, MIPS_SI_FTYPE_VOID, AVAIL, false)
+
+/* Allegrex aliases map to existing MIPS or Allegrex-specific RTL.  */
+#define ALLEGREX_BUILTIN(NAME, INSN, TYPE, FTYPE, PURE) \
+  { CODE_FOR_ ## INSN, MIPS_FP_COND_f, "__builtin_allegrex_" #NAME, \
+    TYPE, FTYPE, mips_builtin_avail_allegrex, PURE }
 
 /* Define a Loongson MIPS_BUILTIN_DIRECT function __builtin_loongson_<FN_NAME>
    for instruction CODE_FOR_loongson_<INSN>.  FUNCTION_TYPE is a
@@ -16216,6 +16224,27 @@ AVAIL_NON_MIPS16 (r6, mips_isa_rev >= 6)
 #define CODE_FOR_mipsr6_class_d CODE_FOR_fclass_df
 
 static const struct mips_builtin_description mips_builtins[] = {
+  /* Sony Allegrex builtin API; generic RTL is reused where available.  */
+  ALLEGREX_BUILTIN (bitrev, allegrex_bitrevsi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SI, true),
+  ALLEGREX_BUILTIN (clz, clzsi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SI, true),
+  ALLEGREX_BUILTIN (clo, allegrex_closi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SI, true),
+  ALLEGREX_BUILTIN (ctz, allegrex_ctzsi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SI, true),
+  ALLEGREX_BUILTIN (cto, allegrex_ctosi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SI, true),
+  ALLEGREX_BUILTIN (rotr, rotrsi3, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SI_SI, true),
+  ALLEGREX_BUILTIN (seb, extendqisi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_QI, true),
+  ALLEGREX_BUILTIN (seh, extendhisi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_HI, true),
+  ALLEGREX_BUILTIN (max, smaxsi3, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SI_SI, true),
+  ALLEGREX_BUILTIN (min, sminsi3, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SI_SI, true),
+  ALLEGREX_BUILTIN (wsbw, bswapsi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SI, true),
+  ALLEGREX_BUILTIN (wsbh, bswaphi2, MIPS_BUILTIN_DIRECT, MIPS_HI_FTYPE_HI, true),
+  ALLEGREX_BUILTIN (sync, sync, MIPS_BUILTIN_DIRECT_NO_TARGET, MIPS_VOID_FTYPE_VOID, false),
+  ALLEGREX_BUILTIN (cache, allegrex_cache, MIPS_BUILTIN_ALLEGREX_CACHE, MIPS_VOID_FTYPE_SI_SI, false),
+  ALLEGREX_BUILTIN (sqrt_s, sqrtsf2, MIPS_BUILTIN_DIRECT, MIPS_SF_FTYPE_SF, true),
+  ALLEGREX_BUILTIN (ceil_w_s, allegrex_ceilsfsi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SF, true),
+  ALLEGREX_BUILTIN (floor_w_s, allegrex_floorsfsi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SF, true),
+  ALLEGREX_BUILTIN (round_w_s, allegrex_roundsfsi2, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SF, true),
+  ALLEGREX_BUILTIN (trunc_w_s, fix_truncsfsi2_insn, MIPS_BUILTIN_DIRECT, MIPS_SI_FTYPE_SF, true),
+
 #define MIPS_GET_FCSR 0
   DIRECT_BUILTIN (get_fcsr, MIPS_USI_FTYPE_VOID, hard_float),
 #define MIPS_SET_FCSR 1
@@ -17803,6 +17832,24 @@ mips_expand_builtin_bposge (enum mips_builtin_type builtin_type, rtx target)
 				       const1_rtx, const0_rtx);
 }
 
+/* Expand the Allegrex cache builtin with a constant operation selector.  */
+static rtx
+mips_expand_builtin_allegrex_cache (enum insn_code icode, tree exp)
+{
+  struct expand_operand ops[2];
+  for (int argno = 0; argno < 2; ++argno)
+    mips_prepare_builtin_arg (&ops[argno], exp, argno);
+
+  if (!CONST_INT_P (ops[0].value)
+      || !IN_RANGE (INTVAL (ops[0].value), 0, 31))
+    {
+      error ("Allegrex cache operation must be a constant in the range 0 to 31");
+      return const0_rtx;
+    }
+
+  return mips_expand_builtin_insn (icode, 2, ops, false);
+}
+
 /* Implement TARGET_EXPAND_BUILTIN.  */
 
 static rtx
@@ -17852,6 +17899,9 @@ mips_expand_builtin (tree exp, rtx target, rtx subtarget ATTRIBUTE_UNUSED,
 
     case MIPS_BUILTIN_BPOSGE32:
       return mips_expand_builtin_bposge (d->builtin_type, target);
+
+    case MIPS_BUILTIN_ALLEGREX_CACHE:
+      return mips_expand_builtin_allegrex_cache (d->icode, exp);
     }
   gcc_unreachable ();
 }
