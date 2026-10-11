@@ -18,16 +18,6 @@
 ;; the Free Software Foundation, 59 Temple Place - Suite 330,
 ;; Boston, MA 02111-1307, USA.
 
-(define_c_enum "unspec" [
-  UNSPEC_BITREV
-  UNSPEC_CLO
-  UNSPEC_CTO
-  UNSPEC_CACHE
-  UNSPEC_CEIL_W_S
-  UNSPEC_FLOOR_W_S
-  UNSPEC_ROUND_W_S
-])
-
 ;; Extended shift instructions.
 
 (define_insn "allegrex_bitrevsi2"

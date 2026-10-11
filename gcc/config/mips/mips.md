@@ -169,6 +169,14 @@
   UNSPEC_JRHB
 
   VUNSPEC_SPECULATION_BARRIER
+  ;; Allegrex-specific operations.
+  UNSPEC_BITREV
+  UNSPEC_CLO
+  UNSPEC_CTO
+  UNSPEC_CACHE
+  UNSPEC_CEIL_W_S
+  UNSPEC_FLOOR_W_S
+  UNSPEC_ROUND_W_S
 ])
 
 (define_constants
