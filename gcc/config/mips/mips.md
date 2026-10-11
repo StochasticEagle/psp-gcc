@@ -8169,6 +8169,9 @@
 ; The MIPS MSA Instructions.
 (include "mips-msa.md")
 
+; Sony Allegrex-specific instruction patterns.
+(include "allegrex.md")
+
 (define_c_enum "unspec" [
   UNSPEC_ADDRESS_FIRST
 ])
