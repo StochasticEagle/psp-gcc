@@ -2910,6 +2910,13 @@ mipstx39-*-elf* | mipstx39el-*-elf*)
 	tm_file="elfos.h newlib-stdint.h ${tm_file} mips/r3900.h mips/elf.h"
 	tmake_file="mips/t-r3900"
 	;;
+mipsallegrex-*-elf* | mipsallegrexel-*-elf* | mipsallegrex-*-psp | mipsallegrexel-*-psp)
+    tm_file="elfos.h newlib-stdint.h ${tm_file} mips/elf.h mips/psp.h"
+    tmake_file="${tmake_file} mips/t-elf"
+    target_cpu_default="MASK_SINGLE_FLOAT|MASK_DIVIDE_BREAKS"
+    tm_defines="${tm_defines} MIPS_ISA_DEFAULT=2 MIPS_CPU_STRING_DEFAULT=\\\"allegrex\\\" MIPS_ABI_DEFAULT=ABI_EABI"
+    use_gcc_stdint=wrap
+    ;;
 mmix-knuth-mmixware)
 	tm_file="${tm_file} newlib-stdint.h"
 	use_gcc_stdint=wrap
@@ -4258,7 +4265,8 @@ if test x$with_arch = x ; then
     x86_64-*-*)
       with_arch=$arch
       ;;
-    mips64r5900-*-* | mips64r5900el-*-* | mipsr5900-*-* | mipsr5900el-*-*)
+    mips64r5900-*-* | mips64r5900el-*-* | mipsr5900-*-* | mipsr5900el-*-* | \
+    mipsallegrex-*-* | mipsallegrexel-*-*)
       with_arch=r5900
       ;;
     mips*-*-vxworks)

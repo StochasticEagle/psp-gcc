@@ -21,3 +21,8 @@
 MULTILIB_OPTIONS = msoft-float EL/EB
 MULTILIB_DIRNAMES = soft-float el eb
 MULTILIB_MATCHES = EL=mel EB=meb msingle-float=m4650
+
+# PSP/newlib uses target libc's stdint.h through GCC's include_next wrapper.
+ifneq (,$(filter %-psp %-psp-elf,$(target)))
+USE_GCC_STDINT = wrap
+endif

@@ -19,7 +19,10 @@ case $machine in
     powerpcle-*-eabisim* | \
     powerpcle-*-eabi* | \
     *-*-vxworks7* | \
-    *-musl* )
+    *-musl* | \
+    psp | \
+    psp-*-* | \
+    *-*-psp )
 	#  IF there is no include fixing,
 	#  THEN create a no-op fixer and exit
 	(echo "#! /bin/sh" ; echo "exit 0" ) > ${target}

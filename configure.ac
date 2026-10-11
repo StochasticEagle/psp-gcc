@@ -3194,6 +3194,9 @@ case "${target}" in
     extra_arflags_for_target=" -X32_64"
     extra_nmflags_for_target=" -B -X32_64"
     ;;
+  mipsallegrex*-psp | mipsallegrex*-psp-elf*)
+    target_makefile_frag="config/mt-allegrex-psp"
+    ;;
 esac
 
 alphaieee_frag=/dev/null
