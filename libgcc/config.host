@@ -1114,8 +1114,10 @@ mipsr5900-*-elf* | mipsr5900el-*-elf*)
 	extra_parts="$extra_parts crti.o crtn.o"
 	;;
 mipsallegrex*-psp*)
-	tmake_file="$tmake_file mips/t-allegrex-psp"
-	extra_parts="$extra_parts crti.o crtn.o"
+	# The PSP driver references crtbegin/crtend as well as crti/crtn.
+	# Build and install them with libgcc, as for bare-metal MIPS ELF.
+	tmake_file="$tmake_file mips/t-elf mips/t-crtstuff mips/t-allegrex-psp"
+	extra_parts="$extra_parts crtbegin.o crtend.o crti.o crtn.o"
 	;;
 mips64-*-elf* | mips64el-*-elf*)
 	tmake_file="$tmake_file mips/t-elf mips/t-crtstuff mips/t-mips16"
