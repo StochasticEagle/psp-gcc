@@ -2914,7 +2914,7 @@ mipsallegrex-*-elf* | mipsallegrexel-*-elf* | mipsallegrex-*-psp | mipsallegrexe
     tm_file="elfos.h newlib-stdint.h ${tm_file} mips/elf.h mips/psp.h"
     tmake_file="${tmake_file} mips/t-elf"
     target_cpu_default="MASK_SINGLE_FLOAT|MASK_DIVIDE_BREAKS"
-    tm_defines="${tm_defines} MIPS_ISA_DEFAULT=2 MIPS_CPU_STRING_DEFAULT=\\\"allegrex\\\" MIPS_ABI_DEFAULT=ABI_32"
+    tm_defines="${tm_defines} MIPS_ISA_DEFAULT=2 MIPS_CPU_STRING_DEFAULT=\\\"allegrex\\\" MIPS_ABI_DEFAULT=ABI_EABI"
     use_gcc_stdint=wrap
     ;;
 mmix-knuth-mmixware)
